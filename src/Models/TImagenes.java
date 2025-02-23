@@ -2,7 +2,7 @@ package Models;
 public class TImagenes {
     private int idImagen;
     private String orden_trabajo;
-    private String ruta_imagen;
+    private byte[] imagen;
 
     public int getIdImagen() {
         return idImagen;
@@ -20,13 +20,12 @@ public class TImagenes {
         this.orden_trabajo = orden_trabajo;
     }
 
-    public String getRuta_imagen() {
-        return ruta_imagen;
+    public byte[] getImagen() {
+        return imagen;
     }
 
-    public void setRuta_imagen(String ruta_imagen) {
-        this.ruta_imagen = ruta_imagen;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
-  
 }

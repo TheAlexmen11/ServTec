@@ -10,8 +10,6 @@ import javax.swing.JComboBox;
 
 public class ClienteVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
     DefaultTableModel modelo;
     int id;
@@ -19,7 +17,7 @@ public class ClienteVM {
     public void RegistrarCliente(TClientes cl) {
         String sql = "INSERT INTO cliente (nombre, telefono, correo, direccion) VALUES (?, ?, ?, ?)";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, cl.getNombre());
             ps.setInt(2, cl.getTelefono());
@@ -41,10 +39,11 @@ public class ClienteVM {
     }
 
     public void EliminarCliente(int idCLiente) {
+
         String sql = "delete from cliente where id_cliente=?";
         id = idCLiente;
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setInt(1, id);
 
@@ -67,7 +66,7 @@ public class ClienteVM {
         List<TClientes> datos = new ArrayList<>();
         String sql = "select * from cliente";
         try {
-            PreparedStatement ps = con.prepareCall(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TClientes c = new TClientes();
@@ -103,11 +102,12 @@ public class ClienteVM {
     }
 
     public TClientes ConsultarClienteporId(int id) {
+
         TClientes c = new TClientes();
         String sql = "select * from cliente where id_cliente=?";
         this.id = id;
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
@@ -128,9 +128,10 @@ public class ClienteVM {
     }
 
     public void ActualizarCliente(TClientes Tclt) {
+
         String sql = "UPDATE cliente SET nombre = ?, telefono = ?, correo = ?, direccion = ? WHERE id_cliente = ?";
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, Tclt.getNombre());
             ps.setInt(2, Tclt.getTelefono());
@@ -161,11 +162,11 @@ public class ClienteVM {
         // Agregar los datos de los clientes al modelo
         for (TClientes cliente : clientes) {
             comboClientes.addItem(new TClientes(
-                cliente.getId_cliente(),
-                cliente.getNombre(),
-                cliente.getTelefono(),
-                cliente.getCorreo(),
-                cliente.getDireccion()
+                    cliente.getId_cliente(),
+                    cliente.getNombre(),
+                    cliente.getTelefono(),
+                    cliente.getCorreo(),
+                    cliente.getDireccion()
             ));
         }
     }

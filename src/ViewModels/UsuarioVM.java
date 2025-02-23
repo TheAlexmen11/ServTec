@@ -14,15 +14,13 @@ import javax.swing.table.DefaultTableModel;
 
 public class UsuarioVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
 
     public void RegistrarUsuario(TUsuarios usr) {
 
         String sql = "INSERT INTO usuario (id_rol, nombre, usuario, password, correo) VALUES (?,?,?,?,?);";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setInt(1, usr.getRol());
             ps.setString(2, usr.getNombre());
@@ -48,7 +46,7 @@ public class UsuarioVM {
         List<TUsuarios> datos = new ArrayList<>();
         String sql = "SELECT * FROM usuario";
         try {
-            PreparedStatement ps = con.prepareCall(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TUsuarios c = new TUsuarios();
@@ -89,7 +87,7 @@ public class UsuarioVM {
         TUsuarios u = new TUsuarios();
         String sql = "SELECT * FROM usuario WHERE id_usuario = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -111,7 +109,7 @@ public class UsuarioVM {
     public void EliminarUsuario(int idUsuario) {
         String sql = "DELETE FROM usuario WHERE id_usuario = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setInt(1, idUsuario);
 
@@ -132,7 +130,7 @@ public class UsuarioVM {
     public void ActualizarUsuario(TUsuarios tusr) {
         String sql = "UPDATE usuario SET  id_rol=?, nombre=?, usuario=?, password=?, correo=?  WHERE id_usuario= ? ";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setInt(1, tusr.getRol());
             ps.setString(2, tusr.getNombre());

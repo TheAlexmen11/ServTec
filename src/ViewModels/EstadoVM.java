@@ -10,8 +10,6 @@ import javax.swing.JComboBox;
 
 public class EstadoVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
 
     public List<TEstado> Listar() {
@@ -20,7 +18,7 @@ public class EstadoVM {
         String sql = "SELECT * FROM estado";
 
         try {
-            ps = con.prepareCall(sql);
+            ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TEstado e = new TEstado();
@@ -55,7 +53,7 @@ public class EstadoVM {
         String sql = "select * from estado where id_estado=?";
         
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             

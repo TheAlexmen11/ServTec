@@ -4,6 +4,7 @@
  */
 package Views;
 
+import Conexion.Conexion;
 import Models.Reparaciones;
 import Models.THistorialDesarrollo;
 import Models.TImagenes;
@@ -15,6 +16,7 @@ import ViewModels.ReparacionesVM;
 import static Views.FrmCliente.mostrarConfirmacion;
 import java.awt.Color;
 import java.awt.Font;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -34,7 +36,7 @@ public class Sistema extends javax.swing.JFrame {
     ImagenesVM imgVM = new ImagenesVM();
     TOrdenesReparacion ordenReparacion = new TOrdenesReparacion();
     List<TImagenes> imagenes = new ArrayList<>();
-    List<THistorialDesarrollo> historialDesarrollo  = new ArrayList<>();
+    List<THistorialDesarrollo> historialDesarrollo = new ArrayList<>();
     private DefaultTableModel tableModel;
     FrmReparacion frmreparacion = new FrmReparacion();
 
@@ -55,6 +57,9 @@ public class Sistema extends javax.swing.JFrame {
      */
     public Sistema() {
         initComponents();
+
+        Conexion.getInstancia().getConnection();
+
         getContentPane().setBackground(new Color(248, 248, 248));
         setExtendedState(MAXIMIZED_BOTH);
         tableModel = new DefaultTableModel(new String[]{"Orden", "Nombre de Cliente", "Dispositivo", "Marca", "Modelo", "Fecha Entrega", "Tecnico", " Estado"}, 0);
@@ -87,10 +92,10 @@ public class Sistema extends javax.swing.JFrame {
         if (filaseleccionado == -1 && filaseleccionado == 0) {
             JOptionPane.showMessageDialog(null, "Cliente no seleccionado");
         } else {
-            if (mostrarConfirmacion("¿Estás seguro de eliminar cliente id : " + ordenReparacion.getOrdenTrabajo()+ "?", "Confirmar Eliminación")) {
+            if (mostrarConfirmacion("¿Estás seguro de eliminar cliente id : " + ordenReparacion.getOrdenTrabajo() + "?", "Confirmar Eliminación")) {
                 hroVM.eliminarHistorialReparacion(historialDesarrollo.get(historialDesarrollo.size() - 1).getOrden_trabajo());
                 orVM.eliminarOrdenReparacion(ordenReparacion.getOrdenTrabajo());
-                
+
             }
 
         }
@@ -101,7 +106,7 @@ public class Sistema extends javax.swing.JFrame {
         if (filaseleccionado == -1) {
             JOptionPane.showMessageDialog(null, "orden no seleccionado");
         } else {
-            FrmReparacion frmRepair = new FrmReparacion(repair,ordenReparacion,tableModel,historialDesarrollo.get(historialDesarrollo.size() - 1),imagenes);
+            FrmReparacion frmRepair = new FrmReparacion(repair, ordenReparacion, tableModel, historialDesarrollo.get(historialDesarrollo.size() - 1), imagenes);
             if (!frmRepair.isVisible()) {
                 frmRepair.setLocationRelativeTo(null);
                 frmRepair.setVisible(true);
@@ -661,11 +666,11 @@ public class Sistema extends javax.swing.JFrame {
 
     private void tablaPrincipalMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPrincipalMousePressed
         int fila = tablaPrincipal.getSelectedRow();
-        
+
         if (fila == -1) {
             JOptionPane.showMessageDialog(null, "orden no seleccionado");
         } else {
-            String id = (String)tablaPrincipal.getValueAt(fila, 0);
+            String id = (String) tablaPrincipal.getValueAt(fila, 0);
             ordenReparacion = orVM.consultarPorId(id);
             historialDesarrollo = hroVM.consultarPorId(id);
             imagenes = imgVM.consultarPorId(id);

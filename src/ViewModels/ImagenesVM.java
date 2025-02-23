@@ -10,26 +10,23 @@ import java.util.ArrayList;
 
 public class ImagenesVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
 
-    public void RegistrarImagen(List<TImagenes> img) {
-        String sql = "INSERT INTO imagenes (orden_trabajo, ruta_imagen) VALUES (?,?)";
+    public void RegistrarImagen(TImagenes img) {
+        String sql = "INSERT INTO imagenes (orden_trabajo, imagen) VALUES (?,?)";
         try {
-            for (TImagenes tImagenes : img) {
-                ps = con.prepareStatement(sql);
-                ps.setString(1, tImagenes.getOrden_trabajo());
-                ps.setString(2, tImagenes.getRuta_imagen());
-                // Ejecutar la inserción
-                int rowsAffected = ps.executeUpdate();
 
-                // Confirmación en consola
-                if (rowsAffected > 0) {
-                    System.out.println("imagen registrado exitosamente: " + tImagenes.getRuta_imagen());
-                } else {
-                    System.out.println("Error al registrar imagen de reparacion .");
-                }
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
+            ps.setString(1, img.getOrden_trabajo());
+            ps.setBytes(2, img.getImagen());
+            // Ejecutar la inserción
+            int rowsAffected = ps.executeUpdate();
+
+            // Confirmación en consola
+            if (rowsAffected > 0) {
+                System.out.println("imagen registrado exitosamente: ");
+            } else {
+                System.out.println("Error al registrar imagen de reparacion .");
             }
 
         } catch (Exception e) {
@@ -43,14 +40,14 @@ public class ImagenesVM {
         List<TImagenes> datos = new ArrayList<>();
 
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TImagenes i = new TImagenes();
                 i.setIdImagen(rs.getInt(1));
                 i.setOrden_trabajo(rs.getString(2));
-                i.setRuta_imagen(rs.getString(3));
+                i.setImagen(rs.getBytes(3));
                 datos.add(i);
             }
         } catch (Exception e) {
@@ -59,11 +56,11 @@ public class ImagenesVM {
 
         return datos;
     }
-    
+
     public void eliminarImagenReparacion(String idOrdenReparacion) {
         String sql = "DELETE FROM imagenes WHERE orden_trabajo = ?;";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, idOrdenReparacion);
 
@@ -82,5 +79,5 @@ public class ImagenesVM {
         }
 
     }
-    
+
 }

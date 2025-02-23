@@ -11,14 +11,12 @@ import javax.swing.table.DefaultTableModel;
 
 public class HistorialDesarrolloVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
 
     public void registrarHistorialDesarrollo(THistorialDesarrollo htor) {
         String sql = "INSERT INTO historialdesarrollo (orden_trabajo, fecha_cambio, desarrollo_tecnico) VALUES (?, ?, ?)";
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
 
             ps.setString(1, htor.getOrden_trabajo());
             ps.setTimestamp(2, htor.getFechaCambio());
@@ -43,7 +41,7 @@ public class HistorialDesarrolloVM {
     public void eliminarHistorialReparacion(String idOrdenReparacion) {
         String sql = "DELETE FROM historialdesarrollo WHERE orden_trabajo = ?;";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, idOrdenReparacion);
 
@@ -73,7 +71,7 @@ public class HistorialDesarrolloVM {
         List<THistorialDesarrollo> datos = new ArrayList<>();
 
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

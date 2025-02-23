@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrdenesReparacionesVM {
-
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
+    
     PreparedStatement ps;
 
     public void registrarOrdenReparacion(TOrdenesReparacion tor) {
@@ -21,7 +19,7 @@ public class OrdenesReparacionesVM {
                 + "modelo, password, nro_serie,valor_diagnostico, valor_reparacion, problema_reportado, fecha_entrega, observacion, comentarios) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
 
             ps.setString(1, tor.getOrdenTrabajo());
             ps.setTimestamp(2, tor.getFechaRecepcion());
@@ -61,7 +59,7 @@ public class OrdenesReparacionesVM {
     public void eliminarOrdenReparacion(String idOrdenReparacion) {
         String sql = "delete from ordenesreparacion where orden_trabajo=?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, idOrdenReparacion);
 
@@ -84,7 +82,7 @@ public class OrdenesReparacionesVM {
         String sql = "UPDATE ordenesreparacion SET fecha_recepcion=?, id_usuario=?, id_cliente=?, id_estado=?, tipo_dispositivo=?, marca=?, "
                 + "modelo=?, password=?, nro_serie=?,valor_diagnostico=?, valor_reparacion=?, problema_reportado=?, fecha_entrega=?, observacion=?, comentarios=? WHERE orden_trabajo = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
 
             // Asignar los valores del cliente al PreparedStatement
             ps.setTimestamp(1, tor.getFechaRecepcion());
@@ -122,7 +120,7 @@ public class OrdenesReparacionesVM {
         TOrdenesReparacion o = new TOrdenesReparacion();
         String sql = "SELECT * FROM ordenesreparacion WHERE orden_trabajo=?";
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
@@ -161,7 +159,7 @@ public class OrdenesReparacionesVM {
         String sql = "SELECT * FROM ordenesreparacion";
 
         try {
-            ps = con.prepareCall(sql);
+            ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TOrdenesReparacion o = new TOrdenesReparacion();

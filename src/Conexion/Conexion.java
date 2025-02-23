@@ -1,19 +1,32 @@
 package Conexion;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class Conexion {
-    static Connection con=null;
-    public Conexion(){
+
+    private static Connection con = null;
+
+    private static Conexion instancia  = null;
+
+    public static Conexion getInstancia() {
+        if (instancia == null) {
+            instancia = new Conexion();
+        }
+        return instancia;
+    }
+
+    public Conexion() {
         try {
-             Class.forName("com.mysql.cj.jdbc.Driver");
-             con = DriverManager.getConnection("jdbc:mysql://localhost/repairtechouse", "root", "");
-             System.out.println("conexion exitosa");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/repairtechouse", "root", "");
+            System.out.println("conexion exitosa");
         } catch (Exception e) {
             System.out.println("conexion fallida");
         }
     }
-    public static Connection getConnection(){
+
+    public Connection getConnection() {
         return con;
     }
 }

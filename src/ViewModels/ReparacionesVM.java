@@ -12,8 +12,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class ReparacionesVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
     OrdenesReparacionesVM orVM = new OrdenesReparacionesVM();
 
@@ -36,7 +34,7 @@ public class ReparacionesVM {
                      JOIN estado e ON o.id_estado = e.id_estado""";
 
         try {
-            ps = con.prepareCall(sql);
+            ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Reparaciones r = new Reparaciones();

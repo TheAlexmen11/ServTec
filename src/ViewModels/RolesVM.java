@@ -7,8 +7,6 @@ import javax.swing.JComboBox;
 
 public class RolesVM {
 
-    Conexion con1 = new Conexion();
-    Connection con = con1.getConnection();
     PreparedStatement ps;
 
     public void consultarRol() {
@@ -19,7 +17,7 @@ public class RolesVM {
         TRoles r = new TRoles();
         String sql = "SELECT * FROM roles WHERE id_roles = ?";
         try {
-            ps = con.prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -38,7 +36,7 @@ public class RolesVM {
     public void llenarCombobox(JComboBox<TRoles> comboRoles) {
         String sql = "SELECT * FROM roles";
         try  {
-            ps = con.prepareCall(sql);
+            ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             comboRoles.removeAll();
             while (rs.next()) {

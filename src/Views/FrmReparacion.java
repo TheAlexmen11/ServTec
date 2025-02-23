@@ -26,12 +26,15 @@ import ViewModels.ImagenesVM;
 import ViewModels.OrdenesReparacionesVM;
 import ViewModels.ReparacionesVM;
 import ViewModels.UsuarioVM;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -39,11 +42,11 @@ import javax.swing.table.DefaultTableModel;
  * @author ALEX
  */
 public class FrmReparacion extends javax.swing.JFrame {
-    
+
     private ArrayList<ImageIcon> imagenes = new ArrayList<>();
     private ArrayList<String> rutasImagenes = new ArrayList<>();
     private ArrayList<String> rutasFinalImagen = new ArrayList<>();
-    
+    private List<byte[]> imagenesBytes = new ArrayList<>();
     private int indiceActual = 0;
     ClienteVM client = new ClienteVM();
     EstadoVM est = new EstadoVM();
@@ -61,7 +64,7 @@ public class FrmReparacion extends javax.swing.JFrame {
     private String id;
     private Sistema sistema;
     private DefaultTableModel tableModel;
-    
+
     public FrmReparacion() {
         initComponents();
         client.llenarCombobox(cmbCliente);
@@ -70,8 +73,8 @@ public class FrmReparacion extends javax.swing.JFrame {
         txtOrden.setText(repair.generarOrden());
         dateRecepcion.setCalendar(fechaActual);
     }
-    
-    public FrmReparacion(ReparacionesVM repair, TOrdenesReparacion ordenReparacion, DefaultTableModel tableModel, THistorialDesarrollo historialDesarrollo,List<TImagenes> imagenes) {
+
+    public FrmReparacion(ReparacionesVM repair, TOrdenesReparacion ordenReparacion, DefaultTableModel tableModel, THistorialDesarrollo historialDesarrollo, List<TImagenes> imagenes) {
         this.repair = repair;
         this.tableModel = tableModel;
         initComponents();
@@ -79,14 +82,14 @@ public class FrmReparacion extends javax.swing.JFrame {
         client.llenarCombobox(cmbCliente);
         est.llenarCombobox(cmbEstado);
         usr.llenarCombobox(cmbTecnico);
-        
+
         id = ordenReparacion.getOrdenTrabajo();
-        
+
         txtOrden.setText(ordenReparacion.getOrdenTrabajo());
         dateRecepcion.setCalendar(cCal.convertirTimestampACalendar(ordenReparacion.getFechaRecepcion()));
-        
+
         cmbTecnico.setSelectedItem(usr.ConsultarUsuarioId(ordenReparacion.getIdUsuario()));
-        
+
         TUsuarios usuarioSeleccionado = usr.ConsultarUsuarioId(ordenReparacion.getIdUsuario());
         for (int i = 0; i < cmbTecnico.getItemCount(); i++) {
             TUsuarios usuarioItem = (TUsuarios) cmbTecnico.getItemAt(i);
@@ -95,7 +98,7 @@ public class FrmReparacion extends javax.swing.JFrame {
                 break;
             }
         }
-        
+
         TClientes clienteSeleccionado = client.ConsultarClienteporId(ordenReparacion.getIdCliente());
         for (int i = 0; i < cmbCliente.getItemCount(); i++) {
             TClientes clienteItem = (TClientes) cmbCliente.getItemAt(i);
@@ -104,7 +107,7 @@ public class FrmReparacion extends javax.swing.JFrame {
                 break;
             }
         }
-        
+
         TEstado estadoSeleccionado = est.consultarPorId(ordenReparacion.getIdEstado());
         for (int i = 0; i < cmbEstado.getItemCount(); i++) {
             TEstado estadoItem = (TEstado) cmbEstado.getItemAt(i);
@@ -113,53 +116,69 @@ public class FrmReparacion extends javax.swing.JFrame {
                 break;
             }
         }
-        
+
         txtTipoDispositivo.setText(ordenReparacion.getTipoDispositivo());
         txtMarca.setText(ordenReparacion.getMarca());
         txtModelo.setText(ordenReparacion.getModelo());
         txtPassword.setText(ordenReparacion.getPassword());
         txtSerie.setText(ordenReparacion.getNroSerie());
-        
+
         txtValorDiagnostico.setText(String.valueOf(ordenReparacion.getValorDiagnostico()));
         txtValorReparacion.setText(String.valueOf(ordenReparacion.getValorReparacion()));
-        
+
         txtProblemaReportado.setText(ordenReparacion.getProblemaReportado());
         txtDesarrolloTecnico.setText(historialDesarrollo.getDesarrolloTecnico());
-        
+
         dateEntrega.setCalendar(cCal.convertirTimestampACalendar(ordenReparacion.getFechaEntrega()));
-        
+
         txtObservaciones.setText(ordenReparacion.getObservaciones());
         txtComentarios.setText(ordenReparacion.getComentarios());
-        
-        
+
         cargarImagenesDesdeLista(imagenes);
     }
-    
+
     private void mostrarImagenActual() {
-        if (!imagenes.isEmpty() && indiceActual >= 0 && indiceActual < imagenes.size()) {
-            lblImagen.setIcon(imagenes.get(indiceActual));
-        } else {
-            lblImagen.setIcon(null); // Si no hay imágenes, limpia el panel
+        if (!imagenesBytes.isEmpty() && indiceActual >= 0 && indiceActual < imagenesBytes.size()) {
+            byte[] imgData = imagenesBytes.get(indiceActual);
+
+            try {
+                ImageIcon icono = new ImageIcon(imgData);
+                Image imgEscalada = icono.getImage().getScaledInstance(
+                        lblImagen.getWidth(),
+                        lblImagen.getHeight(),
+                        Image.SCALE_SMOOTH
+                );
+                lblImagen.setIcon(new ImageIcon(imgEscalada));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-    
+
+    private byte[] convertirImagenABytes(File archivo) throws IOException {
+        BufferedImage bImage = ImageIO.read(archivo);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bImage, "png", bos);
+        return bos.toByteArray();
+    }
+
     public void guardarImagenes() {
         // Crear carpeta destino con el nombre de la orden
         File carpetaDestino = new File("src/resources/img/" + txtOrden.getText());
         if (!carpetaDestino.exists()) {
             carpetaDestino.mkdirs();
         }
-        
+
         for (String rutaTemp : rutasImagenes) {
-            
+
             File archivoTemp = new File(rutaTemp);
             String extension = archivoTemp.getName().substring(archivoTemp.getName().lastIndexOf("."));
             String nuevoNombre = "img_" + System.currentTimeMillis() + extension;
             File destinoFinal = new File(carpetaDestino, nuevoNombre);
-            
+
             System.out.println(destinoFinal.getPath());
             rutasFinalImagen.add(destinoFinal.getPath());
-            
+
             try {
                 Files.copy(archivoTemp.toPath(), destinoFinal.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -168,49 +187,27 @@ public class FrmReparacion extends javax.swing.JFrame {
         }
     }
 
-private void cargarImagenesDesdeLista(List<TImagenes> rutasImagenes) {
-    imagenes.clear(); // Limpiar la lista de imágenes previas
-    
-    try {
-        // Obtener la ruta base del proyecto
-        String rutaBase = new File("").getCanonicalPath();
+    private void cargarImagenesDesdeLista(List<TImagenes> imagenes) {
+        imagenesBytes.clear(); // Limpiar imágenes previas en memoria
 
-        for (TImagenes ruta : rutasImagenes) {
-            // Construir la ruta absoluta desde la ruta relativa almacenada en la BD
-            File archivoImagen = new File(rutaBase, ruta.getRuta_imagen());
-
-            if (archivoImagen.exists()) { // Verificar que el archivo existe
-                ImageIcon imagenOriginal = new ImageIcon(archivoImagen.getAbsolutePath());
-                Image imagenEscalada = imagenOriginal.getImage().getScaledInstance(
-                        lblImagen.getWidth(), // Ancho del JLabel
-                        lblImagen.getHeight(), // Alto del JLabel
-                        Image.SCALE_SMOOTH // Escalado suave
-                );
-
-                imagenes.add(new ImageIcon(imagenEscalada));
-            } else {
-                System.out.println("Imagen no encontrada: " + archivoImagen.getAbsolutePath());
-            }
+        for (TImagenes img : imagenes) {
+            imagenesBytes.add(img.getImagen()); // Guardar los bytes de las imágenes en la lista
         }
 
-        if (!imagenes.isEmpty()) {
-            indiceActual = 0; // Mostrar la primera imagen
-            mostrarImagenActual();
+        if (!imagenesBytes.isEmpty()) {
+            indiceActual = 0; // Reiniciar índice
+            mostrarImagenActual(); // Mostrar la primera imagen
+        } else {
+            System.out.println("No hay imágenes disponibles.");
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
 
-public void eliminarDirectorioImagen(String id){
+    public void eliminarDirectorioImagen(String id) {
 
+    }
 
-}
-    
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -771,30 +768,35 @@ public void eliminarDirectorioImagen(String id){
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarImagenActionPerformed
-        
+
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("Imágenes", "jpg", "png", "jpeg"));
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             archivoSeleccionado = chooser.getSelectedFile();
-            ImageIcon imagenOriginal = new ImageIcon(archivoSeleccionado.getAbsolutePath());
-            // Escalar la imagen al tamaño del JLabel
-            Image imagenEscalada = imagenOriginal.getImage().getScaledInstance(
-                    lblImagen.getWidth(), // Ancho del JLabel
-                    lblImagen.getHeight(), // Alto del JLabel
-                    Image.SCALE_SMOOTH // Escalado suave para mejor calidad
-            );
 
-            ImageIcon imagen = new ImageIcon(imagenEscalada);
+            try {
+                // Convertir imagen a bytes
+                byte[] imagenBytes = convertirImagenABytes(archivoSeleccionado);
+                imagenesBytes.add(imagenBytes); // Guardar en lista
 
-            
-            rutasImagenes.add(archivoSeleccionado.getAbsolutePath());
+                // Mostrar la imagen en el JLabel
+                ImageIcon imagenOriginal = new ImageIcon(archivoSeleccionado.getAbsolutePath());
+                Image imagenEscalada = imagenOriginal.getImage().getScaledInstance(
+                        lblImagen.getWidth(),
+                        lblImagen.getHeight(),
+                        Image.SCALE_SMOOTH
+                );
 
-            // Mostrar la última imagen añadida
-            imagenes.add(imagen);
-            indiceActual = rutasImagenes.size() - 1;
-            mostrarImagenActual();
-            
+                lblImagen.setIcon(new ImageIcon(imagenEscalada));
+
+                // Actualizar índice y mostrar imagen actual
+                indiceActual = imagenesBytes.size() - 1;
+                mostrarImagenActual();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
 
     }//GEN-LAST:event_btnAgregarImagenActionPerformed
@@ -807,17 +809,21 @@ public void eliminarDirectorioImagen(String id){
     }//GEN-LAST:event_btnAnteriorActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        if (indiceActual < imagenes.size() - 1) {
+        if (indiceActual < imagenesBytes.size() - 1) {
             indiceActual++;
             mostrarImagenActual();
         }
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        imagenes.clear();
-        indiceActual = 0;
-        rutasImagenes.clear();
-        mostrarImagenActual();
+        if (!imagenesBytes.isEmpty()) {
+            imagenesBytes.clear();  // Limpiar la lista de imágenes en memoria
+            indiceActual = 0;       // Reiniciar el índice
+
+            lblImagen.setIcon(null); // Limpiar la imagen mostrada en la etiqueta
+
+            System.out.println("Se eliminaron todas las imágenes del visor (temporalmente)");
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
@@ -838,26 +844,29 @@ public void eliminarDirectorioImagen(String id){
             tor.setFechaEntrega(cCal.JDateChooserATimestamp(dateEntrega));
             tor.setObservaciones(txtObservaciones.getText());
             tor.setComentarios(txtComentarios.getText());
-            
+
             htor.setDesarrolloTecnico(txtDesarrolloTecnico.getText());
             htor.setOrden_trabajo(txtOrden.getText());
             htor.setFechaCambio(cCal.JDateChooserATimestamp(dateRecepcion));
-            
-            guardarImagenes();
-            
-            for (String ruta : rutasFinalImagen) {
-                TImagenes timg = new TImagenes();
-                timg.setOrden_trabajo(txtOrden.getText());
-                timg.setRuta_imagen(ruta);
-                timgs.add(timg);
-            }
-            
-            
-            
+
+            //for (String ruta : rutasFinalImagen) {
+            //    TImagenes timg = new TImagenes();
+            //    timg.setOrden_trabajo(txtOrden.getText());
+            //    timg.setRuta_imagen(ruta);
+            //    timgs.add(timg);
+            //}
             or.registrarOrdenReparacion(tor);
             hor.registrarHistorialDesarrollo(htor);
-            imgVM.RegistrarImagen(timgs);
-            
+
+            String OrdenTrabajo = txtOrden.getText();
+
+            for (byte[] imagen : imagenesBytes) {
+                TImagenes nuevaImagen = new TImagenes();
+                nuevaImagen.setOrden_trabajo(OrdenTrabajo);
+                nuevaImagen.setImagen(imagen);
+                imgVM.RegistrarImagen(nuevaImagen); // Enviar a la BD
+            }
+
         } else {
             tor.setOrdenTrabajo(txtOrden.getText());
             tor.setFechaRecepcion(cCal.JDateChooserATimestamp(dateRecepcion));
@@ -875,18 +884,25 @@ public void eliminarDirectorioImagen(String id){
             tor.setFechaEntrega(cCal.JDateChooserATimestamp(dateEntrega));
             tor.setObservaciones(txtObservaciones.getText());
             tor.setComentarios(txtComentarios.getText());
-            
+
             htor.setDesarrolloTecnico(txtDesarrolloTecnico.getText());
             htor.setOrden_trabajo(txtOrden.getText());
             htor.setFechaCambio(cCal.JDateChooserATimestamp(dateRecepcion));
-            
+
             or.ActualizarOrden(tor);
             hor.registrarHistorialDesarrollo(htor);
-            
+
             imgVM.eliminarImagenReparacion(id);
-            eliminarDirectorioImagen(id);
-            imgVM.RegistrarImagen(timgs);
-            
+
+            String OrdenTrabajo = txtOrden.getText();
+
+            for (byte[] imagen : imagenesBytes) {
+                TImagenes nuevaImagen = new TImagenes();
+                nuevaImagen.setOrden_trabajo(OrdenTrabajo);
+                nuevaImagen.setImagen(imagen);
+                imgVM.RegistrarImagen(nuevaImagen); // Enviar a la BD
+            }
+
         }
         if (repair != null && tableModel != null) {
             repair.cargarDatosReparacion(tableModel);  // Ahora pasamos el modelo correcto
@@ -896,7 +912,7 @@ public void eliminarDirectorioImagen(String id){
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnHistorialDesarrolloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialDesarrolloActionPerformed
-        
+
         String orden = txtOrden.getText();
         FrmHistorial frmhistorial = new FrmHistorial(orden);
         if (!frmhistorial.isVisible()) {
@@ -904,7 +920,7 @@ public void eliminarDirectorioImagen(String id){
             frmhistorial.setVisible(true);
             //this.dispose();
         }
-        
+
 
     }//GEN-LAST:event_btnHistorialDesarrolloActionPerformed
 
