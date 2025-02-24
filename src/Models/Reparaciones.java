@@ -1,12 +1,8 @@
 package Models;
-public class Reparaciones {
+public class Reparaciones extends OrdenReparacion{
     private int idOrden;
-    private String ordenTrabajo;
     private String nombreCliente;
     private String dispositivo;
-    private String marca;
-    private String modelo;
-    private String fechaEntrega;
     private String tecnico;
     private String estado;
 
@@ -18,14 +14,6 @@ public class Reparaciones {
         this.idOrden = idOrden;
     } 
     
-    public String getOrdenTrabajo() {
-        return ordenTrabajo;
-    }
-
-    public void setOrdenTrabajo(String ordenTrabajo) {
-        this.ordenTrabajo = ordenTrabajo;
-    }
-
     public String getNombreCliente() {
         return nombreCliente;
     }
@@ -40,30 +28,6 @@ public class Reparaciones {
 
     public void setDispositivo(String dispositivo) {
         this.dispositivo = dispositivo;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
-
-    public String getFechaEntrega() {
-        return fechaEntrega;
-    }
-
-    public void setFechaEntrega(String fechaEntrega) {
-        this.fechaEntrega = fechaEntrega;
     }
 
     public String getTecnico() {

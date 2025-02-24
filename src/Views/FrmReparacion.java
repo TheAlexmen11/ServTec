@@ -18,14 +18,14 @@ import Models.THistorialDesarrollo;
 import Models.TImagenes;
 import Models.TOrdenesReparacion;
 import Models.TUsuarios;
-import ViewModels.CalendarTime;
-import ViewModels.ClienteVM;
-import ViewModels.EstadoVM;
-import ViewModels.HistorialDesarrolloVM;
-import ViewModels.ImagenesVM;
-import ViewModels.OrdenesReparacionesVM;
-import ViewModels.ReparacionesVM;
-import ViewModels.UsuarioVM;
+import Utils.CalendarTime;
+import Controllers.ClienteDAO;
+import Controllers.EstadoDAO;
+import Controllers.HistorialDesarrolloDAO;
+import Controllers.ImagenesDAO;
+import Controllers.OrdenesReparacionesDAO;
+import Controllers.ReparacionesDAO;
+import Controllers.UsuarioDAO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,13 +48,13 @@ public class FrmReparacion extends javax.swing.JFrame {
     private ArrayList<String> rutasFinalImagen = new ArrayList<>();
     private List<byte[]> imagenesBytes = new ArrayList<>();
     private int indiceActual = 0;
-    ClienteVM client = new ClienteVM();
-    EstadoVM est = new EstadoVM();
-    UsuarioVM usr = new UsuarioVM();
-    ReparacionesVM repair = new ReparacionesVM();
-    OrdenesReparacionesVM or = new OrdenesReparacionesVM();
-    HistorialDesarrolloVM hor = new HistorialDesarrolloVM();
-    ImagenesVM imgVM = new ImagenesVM();
+    ClienteDAO client = new ClienteDAO();
+    EstadoDAO est = new EstadoDAO();
+    UsuarioDAO usr = new UsuarioDAO();
+    ReparacionesDAO repair = new ReparacionesDAO();
+    OrdenesReparacionesDAO or = new OrdenesReparacionesDAO();
+    HistorialDesarrolloDAO hor = new HistorialDesarrolloDAO();
+    ImagenesDAO imgVM = new ImagenesDAO();
     Calendar fechaActual = new GregorianCalendar();
     TOrdenesReparacion tor = new TOrdenesReparacion();
     THistorialDesarrollo htor = new THistorialDesarrollo();
@@ -67,30 +67,40 @@ public class FrmReparacion extends javax.swing.JFrame {
 
     public FrmReparacion() {
         initComponents();
-        client.llenarCombobox(cmbCliente);
-        est.llenarCombobox(cmbEstado);
-        usr.llenarCombobox(cmbTecnico);
+        client.llenarComboBox(cmbCliente);
+        est.llenarComboBox(cmbEstado);
+        usr.llenarComboBox(cmbTecnico);
         txtOrden.setText(repair.generarOrden());
         dateRecepcion.setCalendar(fechaActual);
     }
 
-    public FrmReparacion(ReparacionesVM repair, TOrdenesReparacion ordenReparacion, DefaultTableModel tableModel, THistorialDesarrollo historialDesarrollo, List<TImagenes> imagenes) {
+    public FrmReparacion(DefaultTableModel tableModel) {
+        initComponents();
+        this.tableModel = tableModel;
+        client.llenarComboBox(cmbCliente);
+        est.llenarComboBox(cmbEstado);
+        usr.llenarComboBox(cmbTecnico);
+        txtOrden.setText(repair.generarOrden());
+        dateRecepcion.setCalendar(fechaActual);
+    }
+
+    public FrmReparacion(ReparacionesDAO repair, TOrdenesReparacion ordenReparacion, DefaultTableModel tableModel, THistorialDesarrollo historialDesarrollo, List<TImagenes> imagenes) {
         this.repair = repair;
         this.tableModel = tableModel;
         initComponents();
         lblTitulo.setText("Estas editando una orden: ");
-        client.llenarCombobox(cmbCliente);
-        est.llenarCombobox(cmbEstado);
-        usr.llenarCombobox(cmbTecnico);
+        client.llenarComboBox(cmbCliente);
+        est.llenarComboBox(cmbEstado);
+        usr.llenarComboBox(cmbTecnico);
 
         id = ordenReparacion.getOrdenTrabajo();
 
         txtOrden.setText(ordenReparacion.getOrdenTrabajo());
         dateRecepcion.setCalendar(cCal.convertirTimestampACalendar(ordenReparacion.getFechaRecepcion()));
 
-        cmbTecnico.setSelectedItem(usr.ConsultarUsuarioId(ordenReparacion.getIdUsuario()));
+        cmbTecnico.setSelectedItem(usr.consultarPorId(ordenReparacion.getIdUsuario()));
 
-        TUsuarios usuarioSeleccionado = usr.ConsultarUsuarioId(ordenReparacion.getIdUsuario());
+        TUsuarios usuarioSeleccionado = usr.consultarPorId(ordenReparacion.getIdUsuario());
         for (int i = 0; i < cmbTecnico.getItemCount(); i++) {
             TUsuarios usuarioItem = (TUsuarios) cmbTecnico.getItemAt(i);
             if (usuarioItem.getIdUsuario() == usuarioSeleccionado.getIdUsuario()) {
@@ -99,7 +109,7 @@ public class FrmReparacion extends javax.swing.JFrame {
             }
         }
 
-        TClientes clienteSeleccionado = client.ConsultarClienteporId(ordenReparacion.getIdCliente());
+        TClientes clienteSeleccionado = client.consultarPorId(ordenReparacion.getIdCliente());
         for (int i = 0; i < cmbCliente.getItemCount(); i++) {
             TClientes clienteItem = (TClientes) cmbCliente.getItemAt(i);
             if (clienteItem.getId_cliente() == clienteSeleccionado.getId_cliente()) {
@@ -202,8 +212,33 @@ public class FrmReparacion extends javax.swing.JFrame {
         }
     }
 
-    public void eliminarDirectorioImagen(String id) {
+    public void reiniciarForm() {
+        client.llenarComboBox(cmbCliente);
+        est.llenarComboBox(cmbEstado);
+        usr.llenarComboBox(cmbTecnico);
+        txtOrden.setText(repair.generarOrden());
+        dateRecepcion.setCalendar(fechaActual);
+        txtTipoDispositivo.setText("");
+        txtMarca.setText("");
+        txtModelo.setText("");
+        txtPassword.setText("");
+        txtSerie.setText("");
+        txtValorDiagnostico.setText("");
+        txtValorReparacion.setText("");
+        txtProblemaReportado.setText("");
+        txtDesarrolloTecnico.setText("");
+        dateEntrega.cleanup();
+        txtObservaciones.setText("");
+        txtComentarios.setText("");
+        repair.cargarDatosTabla(tableModel);
+          if (!imagenesBytes.isEmpty()) {
+            imagenesBytes.clear();  // Limpiar la lista de imágenes en memoria
+            indiceActual = 0;       // Reiniciar el índice
 
+            lblImagen.setIcon(null); // Limpiar la imagen mostrada en la etiqueta
+
+            System.out.println("Se eliminaron todas las imágenes del visor (temporalmente)");
+        }
     }
 
     /**
@@ -849,14 +884,8 @@ public class FrmReparacion extends javax.swing.JFrame {
             htor.setOrden_trabajo(txtOrden.getText());
             htor.setFechaCambio(cCal.JDateChooserATimestamp(dateRecepcion));
 
-            //for (String ruta : rutasFinalImagen) {
-            //    TImagenes timg = new TImagenes();
-            //    timg.setOrden_trabajo(txtOrden.getText());
-            //    timg.setRuta_imagen(ruta);
-            //    timgs.add(timg);
-            //}
-            or.registrarOrdenReparacion(tor);
-            hor.registrarHistorialDesarrollo(htor);
+            or.registrar(tor);
+            hor.registrar(htor);
 
             String OrdenTrabajo = txtOrden.getText();
 
@@ -864,7 +893,7 @@ public class FrmReparacion extends javax.swing.JFrame {
                 TImagenes nuevaImagen = new TImagenes();
                 nuevaImagen.setOrden_trabajo(OrdenTrabajo);
                 nuevaImagen.setImagen(imagen);
-                imgVM.RegistrarImagen(nuevaImagen); // Enviar a la BD
+                imgVM.registrar(nuevaImagen); // Enviar a la BD
             }
 
         } else {
@@ -889,10 +918,10 @@ public class FrmReparacion extends javax.swing.JFrame {
             htor.setOrden_trabajo(txtOrden.getText());
             htor.setFechaCambio(cCal.JDateChooserATimestamp(dateRecepcion));
 
-            or.ActualizarOrden(tor);
-            hor.registrarHistorialDesarrollo(htor);
+            or.actualizar(tor);
+            hor.registrar(htor);
 
-            imgVM.eliminarImagenReparacion(id);
+            imgVM.eliminar(id);
 
             String OrdenTrabajo = txtOrden.getText();
 
@@ -900,13 +929,14 @@ public class FrmReparacion extends javax.swing.JFrame {
                 TImagenes nuevaImagen = new TImagenes();
                 nuevaImagen.setOrden_trabajo(OrdenTrabajo);
                 nuevaImagen.setImagen(imagen);
-                imgVM.RegistrarImagen(nuevaImagen); // Enviar a la BD
+                imgVM.registrar(nuevaImagen); // Enviar a la BD
             }
 
         }
         if (repair != null && tableModel != null) {
-            repair.cargarDatosReparacion(tableModel);  // Ahora pasamos el modelo correcto
+            repair.cargarDatosTabla(tableModel);  // Ahora pasamos el modelo correcto
         }
+        reiniciarForm();
         this.dispose();
 
     }//GEN-LAST:event_btnGuardarActionPerformed

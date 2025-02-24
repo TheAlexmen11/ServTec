@@ -9,16 +9,17 @@ import Models.Reparaciones;
 import Models.THistorialDesarrollo;
 import Models.TImagenes;
 import Models.TOrdenesReparacion;
-import ViewModels.HistorialDesarrolloVM;
-import ViewModels.ImagenesVM;
-import ViewModels.OrdenesReparacionesVM;
-import ViewModels.ReparacionesVM;
+import Controllers.HistorialDesarrolloDAO;
+import Controllers.ImagenesDAO;
+import Controllers.OrdenesReparacionesDAO;
+import Controllers.ReparacionesDAO;
 import static Views.FrmCliente.mostrarConfirmacion;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,26 +31,19 @@ public class Sistema extends javax.swing.JFrame {
 
     FrmCliente frmcliente = new FrmCliente();
     FrmUsuario frmusuario = new FrmUsuario();
-    ReparacionesVM repair = new ReparacionesVM();
-    OrdenesReparacionesVM orVM = new OrdenesReparacionesVM();
-    HistorialDesarrolloVM hroVM = new HistorialDesarrolloVM();
-    ImagenesVM imgVM = new ImagenesVM();
+    ReparacionesDAO repair = new ReparacionesDAO();
+    OrdenesReparacionesDAO orVM = new OrdenesReparacionesDAO();
+    HistorialDesarrolloDAO hroVM = new HistorialDesarrolloDAO();
+    ImagenesDAO imgVM = new ImagenesDAO();
     TOrdenesReparacion ordenReparacion = new TOrdenesReparacion();
     List<TImagenes> imagenes = new ArrayList<>();
     List<THistorialDesarrollo> historialDesarrollo = new ArrayList<>();
     private DefaultTableModel tableModel;
-    FrmReparacion frmreparacion = new FrmReparacion();
+    FrmReparacion frmreparacion;
 
-    public void forms() {
-
-        frmcliente.setLocationRelativeTo(null);
-        frmcliente.setVisible(true);
-    }
-
-    public void formsU() {
-
-        frmusuario.setLocationRelativeTo(null);
-        frmusuario.setVisible(true);
+    public void formVisible(JFrame frmEstandar) {
+        frmEstandar.setLocationRelativeTo(null);
+        frmEstandar.setVisible(true);
     }
 
     /**
@@ -59,9 +53,9 @@ public class Sistema extends javax.swing.JFrame {
         initComponents();
 
         Conexion.getInstancia().getConnection();
-
         getContentPane().setBackground(new Color(248, 248, 248));
         setExtendedState(MAXIMIZED_BOTH);
+
         tableModel = new DefaultTableModel(new String[]{"Orden", "Nombre de Cliente", "Dispositivo", "Marca", "Modelo", "Fecha Entrega", "Tecnico", " Estado"}, 0);
 
         tablaPrincipal.getTableHeader().setFont(new Font("Segie UI", Font.BOLD, 12));
@@ -72,7 +66,7 @@ public class Sistema extends javax.swing.JFrame {
         tablaPrincipal.getTableHeader().setReorderingAllowed(false);
 
         tablaPrincipal.setModel(tableModel);
-        repair.cargarDatosReparacion(tableModel);
+        repair.cargarDatosTabla(tableModel);
 
     }
 
@@ -93,11 +87,11 @@ public class Sistema extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Cliente no seleccionado");
         } else {
             if (mostrarConfirmacion("¿Estás seguro de eliminar cliente id : " + ordenReparacion.getOrdenTrabajo() + "?", "Confirmar Eliminación")) {
-                hroVM.eliminarHistorialReparacion(historialDesarrollo.get(historialDesarrollo.size() - 1).getOrden_trabajo());
-                orVM.eliminarOrdenReparacion(ordenReparacion.getOrdenTrabajo());
+                hroVM.eliminar(ordenReparacion.getOrdenTrabajo());
+                imgVM.eliminar(ordenReparacion.getOrdenTrabajo());
+                orVM.eliminar(ordenReparacion.getOrdenTrabajo());
 
             }
-
         }
     }
 
@@ -107,10 +101,7 @@ public class Sistema extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "orden no seleccionado");
         } else {
             FrmReparacion frmRepair = new FrmReparacion(repair, ordenReparacion, tableModel, historialDesarrollo.get(historialDesarrollo.size() - 1), imagenes);
-            if (!frmRepair.isVisible()) {
-                frmRepair.setLocationRelativeTo(null);
-                frmRepair.setVisible(true);
-            }
+            formVisible(frmRepair);
             //this.dispose();
         }
 
@@ -418,6 +409,11 @@ public class Sistema extends javax.swing.JFrame {
                 btnNuevaOrdenMouseClicked(evt);
             }
         });
+        btnNuevaOrden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevaOrdenActionPerformed(evt);
+            }
+        });
 
         btnModificar.setBackground(new java.awt.Color(51, 153, 255));
         btnModificar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -592,17 +588,11 @@ public class Sistema extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void PnlClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PnlClientesMouseClicked
-        // TODO add your handling code here:
-        forms();
-
-
+        formVisible(frmcliente);
     }//GEN-LAST:event_PnlClientesMouseClicked
 
     private void PnlUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PnlUsuariosMouseClicked
-
-        formsU();
-
-
+        formVisible(frmusuario);
     }//GEN-LAST:event_PnlUsuariosMouseClicked
 
     private void PnlClientesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PnlClientesMouseEntered
@@ -654,14 +644,11 @@ public class Sistema extends javax.swing.JFrame {
     }//GEN-LAST:event_PnlExportacionMouseExited
 
     private void btnNuevaOrdenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNuevaOrdenMouseClicked
-        if (!frmreparacion.isVisible()) {
-            frmreparacion.setLocationRelativeTo(null);
-            frmreparacion.setVisible(true);
-        }
+
     }//GEN-LAST:event_btnNuevaOrdenMouseClicked
 
     private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
-        repair.cargarDatosReparacion(tableModel);
+        repair.cargarDatosTabla(tableModel);
     }//GEN-LAST:event_btnRefrescarActionPerformed
 
     private void tablaPrincipalMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPrincipalMousePressed
@@ -680,14 +667,23 @@ public class Sistema extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         eliminarOrden();
-        repair.cargarDatosReparacion(tableModel);
+        repair.cargarDatosTabla(tableModel);
         ordenReparacion = null;
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         modificarOrden();
-        repair.cargarDatosReparacion(tableModel);
+        repair.cargarDatosTabla(tableModel);
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnNuevaOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaOrdenActionPerformed
+        if (frmreparacion == null || !frmreparacion.isDisplayable()) {
+            frmreparacion = new FrmReparacion(tableModel);
+            formVisible(frmreparacion);
+        } else {
+            frmreparacion.toFront(); // Lleva la ventana al frente si ya está abierta
+        }
+    }//GEN-LAST:event_btnNuevaOrdenActionPerformed
 
     /**
      * @param args the command line arguments

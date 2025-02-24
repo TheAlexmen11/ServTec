@@ -15,6 +15,11 @@ public class Conexion {
         }
         return instancia;
     }
+    
+    public Connection getConnection() {
+        return con;
+    }
+    
 
     public Conexion() {
         try {
@@ -25,44 +30,16 @@ public class Conexion {
             System.out.println("conexion fallida");
         }
     }
-
-    public Connection getConnection() {
-        return con;
-    }
-}
-/*
-package Conexion;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-public class Conexion {
-    private static Connection con = null;
-    private static final String URL = "jdbc:mysql://localhost/repairtechouse";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-
-    // Constructor privado para evitar instanciación directa
-    private Conexion() {}
-
-    // Método para obtener la conexión
-    public static Connection getConnection() {
-        if (con == null) {
+    
+     public static void cerrarConexion() {
+        if (con != null) {
             try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                con = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Conexión exitosa");
-            } catch (ClassNotFoundException e) {
-                System.out.println("Error: No se encontró el driver JDBC.");
-                e.printStackTrace();
-            } catch (SQLException e) {
-                System.out.println("Error de conexión a la base de datos.");
-                e.printStackTrace();
+                con.close();
+                System.out.println("Conexión cerrada");
+            } catch (Exception e) {
+                System.out.println("Error al cerrar conexión: " + e.getMessage());
             }
         }
-        return con;
     }
-
-
+     
 }
-*/

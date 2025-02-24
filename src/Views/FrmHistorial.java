@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package Views;
 
-import ViewModels.HistorialDesarrolloVM;
+import Controllers.HistorialDesarrolloDAO;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -13,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FrmHistorial extends javax.swing.JFrame {
 
-    HistorialDesarrolloVM historialVM = new HistorialDesarrolloVM();
+    HistorialDesarrolloDAO historialVM = new HistorialDesarrolloDAO();
 
     private DefaultTableModel tableModel;
 
@@ -30,7 +27,7 @@ public class FrmHistorial extends javax.swing.JFrame {
         // Asignar el modelo a la tabla
         tableHistorial.setModel(tableModel);
 
-        historialVM.cargarDatosHistorial(tableModel, orden);
+        historialVM.cargarDatosTabla(tableModel, orden);
     }
 
     /**

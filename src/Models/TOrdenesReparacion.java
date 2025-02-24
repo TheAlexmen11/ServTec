@@ -1,22 +1,18 @@
 package Models;
 
 import java.sql.Timestamp;
-public class TOrdenesReparacion {
+public class TOrdenesReparacion extends OrdenReparacion{
 
-    private String ordenTrabajo;
     private Timestamp fechaRecepcion;
     private int idUsuario;
     private int idCliente;
     private int idEstado;
     private String tipoDispositivo;
-    private String marca;
-    private String modelo;
     private String password;
     private String nroSerie;
     private double valorDiagnostico;
     private double valorReparacion;
     private String problemaReportado;
-    private Timestamp fechaEntrega;
     private String observaciones;
     private String comentarios;
 
@@ -36,15 +32,6 @@ public class TOrdenesReparacion {
         this.comentarios = comentarios;
     }
     
-
-    public String getOrdenTrabajo() {
-        return ordenTrabajo;
-    }
-
-    public void setOrdenTrabajo(String ordenTrabajo) {
-        this.ordenTrabajo = ordenTrabajo;
-    }
-
 
     public int getIdUsuario() {
         return idUsuario;
@@ -76,22 +63,6 @@ public class TOrdenesReparacion {
 
     public void setTipoDispositivo(String tipoDispositivo) {
         this.tipoDispositivo = tipoDispositivo;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
     }
 
     public String getPassword() {

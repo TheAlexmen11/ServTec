@@ -5,9 +5,9 @@
 package Views;
 
 import Models.TUsuarios;
-import ViewModels.ClienteVM;
-import ViewModels.RolesVM;
-import ViewModels.UsuarioVM;
+import Controllers.ClienteDAO;
+import Controllers.RolesDAO;
+import Controllers.UsuarioDAO;
 import Models.TRoles;
 
 /**
@@ -17,26 +17,27 @@ import Models.TRoles;
 public class TFrmUsuario extends javax.swing.JFrame {
 
     TUsuarios Usr = new TUsuarios();
-    UsuarioVM usuario = new UsuarioVM();
-    RolesVM rol = new RolesVM();
+    UsuarioDAO usuario = new UsuarioDAO();
+    RolesDAO rol = new RolesDAO();
     private Integer id;
 
     public TFrmUsuario() {
         initComponents();
-        rol.llenarCombobox(cmbRoles);
+        rol.llenarComboBox(cmbRoles);
 
     }
 
     public TFrmUsuario(TUsuarios tusuario) {
         initComponents();
-        rol.llenarCombobox(cmbRoles);
+        rol.llenarComboBox(cmbRoles);
         lblTitulo.setText("Modificar Usuario :");
         id = tusuario.getIdUsuario();
         txtNombre.setText(tusuario.getNombre());
         txtUsuario.setText(tusuario.getUsuario());
         txtPassword.setText(tusuario.getPassword());
         txtCorreo.setText(tusuario.getCorreo());
-        cmbRoles.setSelectedItem(rol.consultarRolId(tusuario.getRol()));
+        cmbRoles.setSelectedItem(rol.consultarPorId(tusuario.getRol()));
+        txtDni.setText(String.valueOf(tusuario.getDni()));
     }
 
     /**
@@ -61,6 +62,8 @@ public class TFrmUsuario extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
         txtCorreo = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtDni = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -92,6 +95,8 @@ public class TFrmUsuario extends javax.swing.JFrame {
 
         jLabel6.setText("Roles :");
 
+        jLabel5.setText("Dni:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -110,14 +115,16 @@ public class TFrmUsuario extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel6))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel5))
                         .addGap(35, 35, 35)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtNombre)
                             .addComponent(cmbRoles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtPassword)
                             .addComponent(txtUsuario)
-                            .addComponent(txtCorreo))))
+                            .addComponent(txtCorreo)
+                            .addComponent(txtDni))))
                 .addGap(18, 18, 18))
         );
         jPanel1Layout.setVerticalGroup(
@@ -128,6 +135,10 @@ public class TFrmUsuario extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -143,14 +154,13 @@ public class TFrmUsuario extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bntGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cmbRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(6, 6, 6))
+                    .addComponent(cmbRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bntGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
         );
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 255));
@@ -207,7 +217,8 @@ public class TFrmUsuario extends javax.swing.JFrame {
             Usr.setPassword(txtPassword.getText());
             Usr.setCorreo(txtCorreo.getText());
             Usr.setRol(cmbRoles.getItemAt(cmbRoles.getSelectedIndex()).getIdRol());
-            usuario.RegistrarUsuario(Usr);
+            Usr.setDni(Integer.parseInt(txtDni.getText()));
+            usuario.registrar(Usr);
         } else {
             Usr.setIdUsuario(id);
             Usr.setNombre(txtNombre.getText());
@@ -215,7 +226,8 @@ public class TFrmUsuario extends javax.swing.JFrame {
             Usr.setPassword(txtPassword.getText());
             Usr.setCorreo(txtCorreo.getText());
             Usr.setRol(cmbRoles.getItemAt(cmbRoles.getSelectedIndex()).getIdRol());
-            usuario.ActualizarUsuario(Usr);
+            Usr.setDni(Integer.parseInt(txtDni.getText()));
+            usuario.actualizar(Usr);
         }
         this.dispose();
         FrmUsuario frmUsuario = new FrmUsuario();
@@ -274,11 +286,13 @@ public class TFrmUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txtCorreo;
+    private javax.swing.JTextField txtDni;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsuario;

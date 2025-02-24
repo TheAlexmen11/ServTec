@@ -5,7 +5,7 @@
 package Views;
 
 import Models.TUsuarios;
-import ViewModels.UsuarioVM;
+import Controllers.UsuarioDAO;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -20,7 +20,7 @@ import javax.swing.table.TableRowSorter;
 public class FrmUsuario extends javax.swing.JFrame {
 
     TFrmUsuario Tfrmusuario = new TFrmUsuario();
-    UsuarioVM usuario = new UsuarioVM();
+    UsuarioDAO usuario = new UsuarioDAO();
     TUsuarios tusuario = new TUsuarios();
     private DefaultTableModel tableModel;
     private TableRowSorter<DefaultTableModel> rowSorter;
@@ -31,7 +31,7 @@ public class FrmUsuario extends javax.swing.JFrame {
         // Asignar el modelo a la tabla
         tablaUsuario.setModel(tableModel);
 
-        usuario.cargarDatosUsuario(tableModel);
+        usuario.cargarDatosTabla(tableModel);
         
         configurarFiltrado();
     }
@@ -86,7 +86,7 @@ public class FrmUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Cliente no seleccionado");
         } else {
             if (mostrarConfirmacion("¿Estás seguro de eliminar cliente id : " + tusuario.getIdUsuario() + "?", "Confirmar Eliminación")) {
-                usuario.EliminarUsuario(tusuario.getIdUsuario());
+                usuario.eliminar(tusuario.getIdUsuario());
             }
 
         }
@@ -348,6 +348,7 @@ public class FrmUsuario extends javax.swing.JFrame {
         if (!Tfrmusuario.isVisible()) {
             Tfrmusuario.setLocationRelativeTo(null);
             Tfrmusuario.setVisible(true);
+            this.dispose();
         }
     }//GEN-LAST:event_btnAgregarUsuariosActionPerformed
 
@@ -357,18 +358,18 @@ public class FrmUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Usuario no seleccionado");
         } else {
             int id = (Integer) tablaUsuario.getValueAt(fila, 0);
-            tusuario = usuario.ConsultarUsuarioId(id);
+            tusuario = usuario.consultarPorId(id);
             System.out.println(id);
         }
     }//GEN-LAST:event_tablaUsuarioMousePressed
 
     private void btnRefrescarTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefrescarTablaMouseClicked
-        usuario.cargarDatosUsuario(tableModel);
+        usuario.cargarDatosTabla(tableModel);
     }//GEN-LAST:event_btnRefrescarTablaMouseClicked
 
     private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarUsuarioActionPerformed
         eliminarUsuario();
-        usuario.cargarDatosUsuario(tableModel);
+        usuario.cargarDatosTabla(tableModel);
     }//GEN-LAST:event_btnEliminarUsuarioActionPerformed
 
     private void btnModificarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarUsuarioActionPerformed
