@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUDHistorialImagen;

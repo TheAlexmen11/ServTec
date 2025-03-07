@@ -5,7 +5,7 @@
 package Views;
 
 import Models.TClientes;
-import Controllers.ClienteDAO;
+import Dao.ClienteDAO;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

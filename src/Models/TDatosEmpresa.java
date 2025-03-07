@@ -1,16 +1,27 @@
 package Models;
+
 public class TDatosEmpresa {
- private int idEmpresa;
+
+    private int idEmpresa;
     private String nombre;
     private String direccion;
     private String correo;
     private String telefono;
+    private String razonSocial;
     private String horario;
     private String diasHorario;
     private String horario1;
     private String diasHorario1;
     private String terminoCondiciones;
     private String logoUrl;
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
 
     public int getIdEmpresa() {
         return idEmpresa;
@@ -100,4 +111,3 @@ public class TDatosEmpresa {
         this.logoUrl = logoUrl;
     }
 }
-

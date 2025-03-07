@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUD;
@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class UsuarioDAO implements CRUD<TUsuarios, Integer>, CargadorDeComboBox<TUsuarios>,CargadorDeDatosTabla {
     
-    PreparedStatement ps;
+    private PreparedStatement ps;
     
     @Override
     public void registrar(TUsuarios usr) {

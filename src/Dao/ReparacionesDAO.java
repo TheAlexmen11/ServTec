@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUD;
@@ -14,8 +14,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class ReparacionesDAO implements CRUD<Reparaciones, String>,CargadorDeDatosTabla {
 
-    PreparedStatement ps;
-    OrdenesReparacionesDAO orVM = new OrdenesReparacionesDAO();
+    private PreparedStatement ps;
+    private OrdenesReparacionesDAO orDAO = new OrdenesReparacionesDAO();
 
     @Override
     public List<Reparaciones> listar() {
@@ -86,7 +86,7 @@ public class ReparacionesDAO implements CRUD<Reparaciones, String>,CargadorDeDat
         String fecha = formato.format(new Date());
 
         // Obtener la cantidad de órdenes ya registradas hoy
-        List<TOrdenesReparacion> ordenes = orVM.listar();
+        List<TOrdenesReparacion> ordenes = orDAO.listar();
         int contador = ordenes.size() + 1; // Incrementar el número de orden
 
         // Formar el código de orden único

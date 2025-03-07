@@ -2,9 +2,9 @@ package servtec;
 
 import Conexion.Conexion;
 import Models.Reparaciones;
-import Controllers.ClienteDAO;
-import Controllers.OrdenesReparacionesDAO;
-import Controllers.ReparacionesDAO;
+import Dao.ClienteDAO;
+import Dao.OrdenesReparacionesDAO;
+import Dao.ReparacionesDAO;
 import java.sql.Connection;
 import java.util.List;
 

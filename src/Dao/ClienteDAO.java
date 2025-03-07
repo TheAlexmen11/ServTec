@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Models.TClientes;
@@ -13,15 +13,13 @@ import javax.swing.JComboBox;
 
 public class ClienteDAO implements CRUD<TClientes,Integer>, CargadorDeDatosTabla, CargadorDeComboBox<TClientes> {
 
-    PreparedStatement ps;
-    DefaultTableModel modelo;
-    int id;
+    private PreparedStatement ps;
 
     @Override
     public void registrar(TClientes cl) {
         String sql = "INSERT INTO cliente (nombre, telefono, correo, direccion,dni) VALUES (?, ?, ?, ?,?)";
         try {
-            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
             ps.setString(1, cl.getNombre());
             ps.setInt(2, cl.getTelefono());
@@ -46,18 +44,17 @@ public class ClienteDAO implements CRUD<TClientes,Integer>, CargadorDeDatosTabla
     @Override
     public void eliminar(Integer idCLiente) {
         String sql = "delete from cliente where id_cliente=?";
-        id = idCLiente;
         try {
-            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
+            ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             // Asignar los valores del cliente al PreparedStatement
-            ps.setInt(1, id);
+            ps.setInt(1, idCLiente);
 
             // Ejecutar la inserción
             int rowsAffected = ps.executeUpdate();
 
             // Confirmación en consola
             if (rowsAffected > 0) {
-                System.out.println("Cliente eliminado exitosamente: " + id);
+                System.out.println("Cliente eliminado exitosamente: " + idCLiente);
             } else {
                 System.out.println("Error al eliminado el cliente.");
             }
@@ -72,7 +69,7 @@ public class ClienteDAO implements CRUD<TClientes,Integer>, CargadorDeDatosTabla
         List<TClientes> datos = new ArrayList<>();
         String sql = "select * from cliente";
         try {
-            PreparedStatement ps = Conexion.getInstancia().getConnection().prepareCall(sql);
+            ps = Conexion.getInstancia().getConnection().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 TClientes c = new TClientes();
@@ -114,7 +111,6 @@ public class ClienteDAO implements CRUD<TClientes,Integer>, CargadorDeDatosTabla
 
         TClientes c = new TClientes();
         String sql = "select * from cliente where id_cliente=?";
-        this.id = id;
         try {
             ps = Conexion.getInstancia().getConnection().prepareStatement(sql);
             ps.setInt(1, id);

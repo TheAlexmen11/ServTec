@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUDHistorialImagen;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ImagenesDAO implements CRUDHistorialImagen<TImagenes, String> {
 
-    PreparedStatement ps;
+    private PreparedStatement ps;
 
     @Override
     public void registrar(TImagenes img) {

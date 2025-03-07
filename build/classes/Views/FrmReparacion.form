@@ -754,7 +754,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                  <Component id="jButton3" min="-2" pref="125" max="-2" attributes="0"/>
+                  <Component id="btnImprimir" min="-2" pref="125" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnMensaje" min="-2" pref="125" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -772,7 +772,7 @@
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                       <Component id="btnHistorialDesarrollo" alignment="1" min="-2" pref="39" max="-2" attributes="0"/>
                       <Component id="btnMensaje" alignment="1" max="32767" attributes="0"/>
-                      <Component id="jButton3" max="32767" attributes="0"/>
+                      <Component id="btnImprimir" max="32767" attributes="0"/>
                       <Component id="btnGuardar" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -781,10 +781,13 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="jButton3">
+        <Component class="javax.swing.JButton" name="btnImprimir">
           <Properties>
             <Property name="text" type="java.lang.String" value="Imprimir"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnImprimirActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnMensaje">
           <Properties>

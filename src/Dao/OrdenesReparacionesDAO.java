@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUD;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class OrdenesReparacionesDAO implements CRUD<TOrdenesReparacion,String>{
     
-    PreparedStatement ps;
+    private PreparedStatement ps;
 
     @Override
     public void registrar(TOrdenesReparacion tor) {

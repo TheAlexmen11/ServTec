@@ -9,8 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.SwingConstants;
-import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Models.TClientes;
 import Models.TEstado;
@@ -19,13 +17,14 @@ import Models.TImagenes;
 import Models.TOrdenesReparacion;
 import Models.TUsuarios;
 import Utils.CalendarTime;
-import Controllers.ClienteDAO;
-import Controllers.EstadoDAO;
-import Controllers.HistorialDesarrolloDAO;
-import Controllers.ImagenesDAO;
-import Controllers.OrdenesReparacionesDAO;
-import Controllers.ReparacionesDAO;
-import Controllers.UsuarioDAO;
+import Dao.ClienteDAO;
+import Dao.EstadoDAO;
+import Dao.HistorialDesarrolloDAO;
+import Dao.ImagenesDAO;
+import Dao.OrdenesReparacionesDAO;
+import Dao.ReparacionesDAO;
+import Dao.UsuarioDAO;
+import Utils.GenerarOrdenServicio;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -72,6 +71,9 @@ public class FrmReparacion extends javax.swing.JFrame {
         usr.llenarComboBox(cmbTecnico);
         txtOrden.setText(repair.generarOrden());
         dateRecepcion.setCalendar(fechaActual);
+        btnImprimir.setEnabled(false);
+        btnHistorialDesarrollo.setEnabled(false);
+        btnMensaje.setEnabled(false);
     }
 
     public FrmReparacion(DefaultTableModel tableModel) {
@@ -82,9 +84,14 @@ public class FrmReparacion extends javax.swing.JFrame {
         usr.llenarComboBox(cmbTecnico);
         txtOrden.setText(repair.generarOrden());
         dateRecepcion.setCalendar(fechaActual);
+        btnImprimir.setEnabled(false);
+        btnHistorialDesarrollo.setEnabled(false);
+        btnMensaje.setEnabled(false);
     }
 
     public FrmReparacion(ReparacionesDAO repair, TOrdenesReparacion ordenReparacion, DefaultTableModel tableModel, THistorialDesarrollo historialDesarrollo, List<TImagenes> imagenes) {
+        tor = ordenReparacion;
+        htor = historialDesarrollo;
         this.repair = repair;
         this.tableModel = tableModel;
         initComponents();
@@ -231,7 +238,7 @@ public class FrmReparacion extends javax.swing.JFrame {
         txtObservaciones.setText("");
         txtComentarios.setText("");
         repair.cargarDatosTabla(tableModel);
-          if (!imagenesBytes.isEmpty()) {
+        if (!imagenesBytes.isEmpty()) {
             imagenesBytes.clear();  // Limpiar la lista de imágenes en memoria
             indiceActual = 0;       // Reiniciar el índice
 
@@ -297,7 +304,7 @@ public class FrmReparacion extends javax.swing.JFrame {
         lblImagen = new javax.swing.JLabel();
         btnAgregarImagen = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        btnImprimir = new javax.swing.JButton();
         btnMensaje = new javax.swing.JButton();
         btnHistorialDesarrollo = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
@@ -684,7 +691,12 @@ public class FrmReparacion extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
-        jButton3.setText("Imprimir");
+        btnImprimir.setText("Imprimir");
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
 
         btnMensaje.setText("Mensaje");
         btnMensaje.addActionListener(new java.awt.event.ActionListener() {
@@ -713,7 +725,7 @@ public class FrmReparacion extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -729,7 +741,7 @@ public class FrmReparacion extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(btnHistorialDesarrollo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnImprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -896,6 +908,11 @@ public class FrmReparacion extends javax.swing.JFrame {
                 imgVM.registrar(nuevaImagen); // Enviar a la BD
             }
 
+            dateRecepcion.setCalendar(fechaActual);
+            btnImprimir.setEnabled(true);
+            btnHistorialDesarrollo.setEnabled(true);
+            btnMensaje.setEnabled(true);
+
         } else {
             tor.setOrdenTrabajo(txtOrden.getText());
             tor.setFechaRecepcion(cCal.JDateChooserATimestamp(dateRecepcion));
@@ -958,6 +975,10 @@ public class FrmReparacion extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnMensajeActionPerformed
 
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        GenerarOrdenServicio gen = new GenerarOrdenServicio(tor, htor);
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1000,6 +1021,7 @@ public class FrmReparacion extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnHistorialDesarrollo;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnMensaje;
     private javax.swing.JButton btnSiguiente;
     private javax.swing.JComboBox<TClientes> cmbCliente;
@@ -1008,7 +1030,6 @@ public class FrmReparacion extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser dateEntrega;
     private com.toedter.calendar.JDateChooser dateRecepcion;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

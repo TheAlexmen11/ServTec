@@ -5,7 +5,11 @@
 package Views;
 
 import Models.TClientes;
-import Controllers.ClienteDAO;
+import Dao.ClienteDAO;
+import Validations.Validator;
+import java.util.LinkedList;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -49,10 +53,9 @@ public class TFrmCliente extends javax.swing.JFrame {
         lblDireccion = new javax.swing.JLabel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtDireccion = new javax.swing.JTextArea();
-        lblNombre1 = new javax.swing.JLabel();
+        lblDni = new javax.swing.JLabel();
         txtDni = new javax.swing.JTextField();
+        txtDireccion = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -66,7 +69,7 @@ public class TFrmCliente extends javax.swing.JFrame {
 
         lblCorreo.setText("Correo :");
 
-        lblDireccion.setText("Dirreccion : ");
+        lblDireccion.setText("Dirección:");
 
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -82,11 +85,7 @@ public class TFrmCliente extends javax.swing.JFrame {
             }
         });
 
-        txtDireccion.setColumns(20);
-        txtDireccion.setRows(5);
-        jScrollPane1.setViewportView(txtDireccion);
-
-        lblNombre1.setText("Dni:");
+        lblDni.setText("Dni:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -95,7 +94,7 @@ public class TFrmCliente extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(194, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -109,20 +108,20 @@ public class TFrmCliente extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(16, 16, 16)
-                                        .addComponent(txtNombre))))
+                                        .addGap(37, 37, 37)
+                                        .addComponent(txtDireccion))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblTelefono)
                                     .addComponent(lblCorreo)
-                                    .addComponent(lblNombre1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblDni))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCorreo, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtDni, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))))))
+                                    .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+                                    .addComponent(txtDni, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtCorreo))))))
                 .addGap(18, 18, 18))
         );
         jPanel1Layout.setVerticalGroup(
@@ -135,24 +134,24 @@ public class TFrmCliente extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblNombre1))
+                    .addComponent(lblDni))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTelefono)
                     .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblCorreo)
-                    .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCorreo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblDireccion))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 255));
@@ -195,8 +194,8 @@ public class TFrmCliente extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -204,27 +203,45 @@ public class TFrmCliente extends javax.swing.JFrame {
 
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (id == null) {
-            cl.setNombre(txtNombre.getText());
-            cl.setTelefono(Integer.parseInt(txtTelefono.getText()));
-            cl.setCorreo(txtCorreo.getText());
-            cl.setDireccion(txtDireccion.getText());
-            cl.setDni(Integer.parseInt(txtDni.getText()));
-            clientes.registrar(cl);
+        LinkedList<JTextField> campos = new LinkedList<>();
+        LinkedList<JLabel> etiquetas = new LinkedList<>();
 
-        } else {
-            cl.setId_cliente(id);
-            cl.setNombre(txtNombre.getText());
-            cl.setTelefono(Integer.parseInt(txtTelefono.getText()));
-            cl.setCorreo(txtCorreo.getText());
-            cl.setDireccion(txtDireccion.getText());
-            cl.setDni(Integer.parseInt(txtDni.getText()));
-            clientes.actualizar(cl);
+        campos.add(txtNombre);
+        etiquetas.add(lblNombre);
+        campos.add(txtDni);
+        etiquetas.add(lblDni);
+        campos.add(txtTelefono);
+        etiquetas.add(lblTelefono);
+        campos.add(txtCorreo);
+        etiquetas.add(lblCorreo);
+        campos.add(txtDireccion);
+        etiquetas.add(lblDireccion);
+
+        if (Validator.validarCampos(campos, etiquetas)) {
+            if (id == null) {
+                cl.setNombre(txtNombre.getText());
+                cl.setTelefono(Integer.parseInt(txtTelefono.getText()));
+                cl.setCorreo(txtCorreo.getText());
+                cl.setDireccion(txtDireccion.getText());
+                cl.setDni(Integer.parseInt(txtDni.getText()));
+                clientes.registrar(cl);
+
+            } else {
+                cl.setId_cliente(id);
+                cl.setNombre(txtNombre.getText());
+                cl.setTelefono(Integer.parseInt(txtTelefono.getText()));
+                cl.setCorreo(txtCorreo.getText());
+                cl.setDireccion(txtDireccion.getText());
+                cl.setDni(Integer.parseInt(txtDni.getText()));
+                clientes.actualizar(cl);
+            }
+            this.dispose();
+            FrmCliente frmCliente = new FrmCliente();
+            frmCliente.setLocationRelativeTo(null);
+            frmCliente.setVisible(true);
         }
-        this.dispose();
-        FrmCliente frmCliente = new FrmCliente();
-        frmCliente.setLocationRelativeTo(null);
-        frmCliente.setVisible(true);
+
+
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -276,15 +293,14 @@ public class TFrmCliente extends javax.swing.JFrame {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCorreo;
     private javax.swing.JLabel lblDireccion;
+    private javax.swing.JLabel lblDni;
     private javax.swing.JLabel lblNombre;
-    private javax.swing.JLabel lblNombre1;
     private javax.swing.JLabel lblTelefono;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txtCorreo;
-    private javax.swing.JTextArea txtDireccion;
+    private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtDni;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;

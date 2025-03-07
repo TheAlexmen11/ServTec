@@ -5,7 +5,7 @@
 package Views;
 
 import Models.TUsuarios;
-import Controllers.UsuarioDAO;
+import Dao.UsuarioDAO;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;

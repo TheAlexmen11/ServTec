@@ -1,7 +1,7 @@
 
 package Views;
 
-import Controllers.HistorialDesarrolloDAO;
+import Dao.HistorialDesarrolloDAO;
 import javax.swing.table.DefaultTableModel;
 
 /**

@@ -9,18 +9,22 @@ import Models.Reparaciones;
 import Models.THistorialDesarrollo;
 import Models.TImagenes;
 import Models.TOrdenesReparacion;
-import Controllers.HistorialDesarrolloDAO;
-import Controllers.ImagenesDAO;
-import Controllers.OrdenesReparacionesDAO;
-import Controllers.ReparacionesDAO;
+import Dao.HistorialDesarrolloDAO;
+import Dao.ImagenesDAO;
+import Dao.OrdenesReparacionesDAO;
+import Dao.ReparacionesDAO;
 import static Views.FrmCliente.mostrarConfirmacion;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -70,6 +74,9 @@ public class Sistema extends javax.swing.JFrame {
 
     }
 
+    
+    
+    
     public static boolean mostrarConfirmacion(String mensaje, String titulo) {
         int opcion = JOptionPane.showConfirmDialog(
                 null,
@@ -492,6 +499,38 @@ public class Sistema extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tablaPrincipal);
+        tablaPrincipal.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                //cell.setOpaque(true);
+
+                int columnaEstado = 7; // Ajusta según la posición de la columna "Estado"
+                Color colorFondo = Color.WHITE; // Color por defecto
+                Color colorTexto = Color.BLACK; // Color de texto por defecto
+
+                if (column == columnaEstado && value != null) {
+                    String estado = value.toString().trim().toLowerCase();
+
+                    switch (estado) {
+                        case "recibido" -> colorFondo = Color.YELLOW;
+                        case "en proceso" -> colorFondo = Color.GREEN;
+                    }
+                }
+
+                // Si la celda está seleccionada, cambiar el color del texto para que sea visible
+                if (isSelected) {
+                    colorFondo = table.getSelectionBackground();
+                    colorTexto = table.getSelectionForeground();
+                }
+
+                cell.setBackground(colorFondo);
+                cell.setForeground(colorTexto);
+
+                return cell;
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);

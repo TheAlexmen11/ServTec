@@ -1,7 +1,6 @@
 package Interfaces;
 
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
 
 public interface CRUD<O ,T > {
 

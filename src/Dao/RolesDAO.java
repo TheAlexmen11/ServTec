@@ -1,4 +1,4 @@
-package Controllers;
+package Dao;
 
 import Conexion.Conexion;
 import Interfaces.CRUD;
@@ -10,11 +10,7 @@ import javax.swing.JComboBox;
 
 public class RolesDAO implements CRUD<TRoles,Integer>,CargadorDeComboBox<TRoles>{
 
-    PreparedStatement ps;
-
-    public void consultarRol() {
-
-    }
+    private  PreparedStatement ps;
 
     @Override
     public TRoles consultarPorId(Integer id) {
