@@ -7,7 +7,7 @@ public class Conexion {
 
     private static Connection con = null;
 
-    private static Conexion instancia  = null;
+    private static Conexion instancia = null;
 
     public static Conexion getInstancia() {
         if (instancia == null) {
@@ -15,11 +15,10 @@ public class Conexion {
         }
         return instancia;
     }
-    
+
     public Connection getConnection() {
         return con;
     }
-    
 
     public Conexion() {
         try {
@@ -30,8 +29,8 @@ public class Conexion {
             System.out.println("conexion fallida");
         }
     }
-    
-     public static void cerrarConexion() {
+
+    public static void cerrarConexion() {
         if (con != null) {
             try {
                 con.close();
@@ -41,5 +40,4 @@ public class Conexion {
             }
         }
     }
-     
 }

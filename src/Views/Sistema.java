@@ -514,8 +514,12 @@ public class Sistema extends javax.swing.JFrame {
                     String estado = value.toString().trim().toLowerCase();
 
                     switch (estado) {
-                        case "recibido" -> colorFondo = Color.YELLOW;
-                        case "en proceso" -> colorFondo = Color.GREEN;
+                        case "recepcionado" -> colorFondo = Color.YELLOW;
+                        case "en reparación" -> colorFondo = Color.ORANGE;
+                        case "esperando repuestos" -> colorFondo = Color.BLUE;
+                        case "reparado - pendiente de pago" -> colorFondo = Color.CYAN;
+                        case "cancelado" -> colorFondo = Color.RED;
+                        default -> colorFondo = Color.WHITE; // En caso de que haya un estado inesperado
                     }
                 }
 
